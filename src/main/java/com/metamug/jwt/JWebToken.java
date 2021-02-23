@@ -23,13 +23,14 @@ import org.json.JSONObject;
  */
 public class JWebToken {
 
-    private static final String SECRET_KEY = "FREE_MASON"; //@TODO Add Signature here
+    private static final String SECRET_KEY = "ThisIsMySpecialSecretKey:OU812!";
     private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
     private static final String ISSUER = "mason.metamug.net";
     private static final String JWT_HEADER = "{\"alg\":\"HS256\",\"typ\":\"JWT\"}";
     private JSONObject payload = new JSONObject();
     private String signature;
     private String encodedHeader;
+    private String secretKey;
 
     private JWebToken() {
         encodedHeader = encode(new JSONObject(JWT_HEADER));
@@ -39,25 +40,32 @@ public class JWebToken {
         this(payload.getString("sub"), payload.getJSONArray("aud"), payload.getLong("exp"));
     }
 
-    public JWebToken(String sub, JSONArray aud, long expires) {
+    public JWebToken(String sub, JSONArray aud, long expires, String secretKey) {
         this();
+        this.secretKey = secretKey;
         payload.put("sub", sub);
         payload.put("aud", aud);
         payload.put("exp", expires);
         payload.put("iat", LocalDateTime.now().toEpochSecond(ZoneOffset.UTC));
         payload.put("iss", ISSUER);
         payload.put("jti", UUID.randomUUID().toString()); //how do we use this?
-        signature = hmacSha256(encodedHeader + "." + encode(payload), SECRET_KEY);
+        signature = hmacSha256(encodedHeader + "." + encode(payload), getSecretKey());
     }
+
+    public JWebToken(String sub, JSONArray aud, long expires) {
+        this(sub, aud, expires, SECRET_KEY);
+    } 
 
     /**
      * For verification
      *
      * @param token
+     * @param secretKey
      * @throws java.security.NoSuchAlgorithmException
      */
-    public JWebToken(String token) throws NoSuchAlgorithmException {
+    public JWebToken(String token, String secretKey) throws NoSuchAlgorithmException {
         this();
+        this.secretKey = secretKey;
         String[] parts = token.split("\\.");
         if (parts.length != 3) {
             throw new IllegalArgumentException("Invalid Token format");
@@ -78,6 +86,16 @@ public class JWebToken {
         signature = parts[2];
     }
 
+    /**
+     * For verification
+     *
+     * @param token
+     * @throws java.security.NoSuchAlgorithmException
+     */
+    public JWebToken(String token) throws NoSuchAlgorithmException {
+       this(token, SECRET_KEY);  
+    }
+
     @Override
     public String toString() {
         return encodedHeader + "." + encode(payload) + "." + signature;
@@ -85,7 +103,7 @@ public class JWebToken {
 
     public boolean isValid() {
         return payload.getLong("exp") > (LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)) //token not expired
-                && signature.equals(hmacSha256(encodedHeader + "." + encode(payload), SECRET_KEY)); //signature matched
+                && signature.equals(hmacSha256(encodedHeader + "." + encode(payload), getSecretKey())); //signature matched
     }
 
     public String getSubject() {
@@ -99,6 +117,11 @@ public class JWebToken {
             list.add(arr.getString(i));
         }
         return list;
+    }
+
+    private String getSecretKey() {
+       if (secretKey == null) return SECRET_KEY;
+       return secretKey;
     }
 
     private static String encode(JSONObject obj) {
