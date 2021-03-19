@@ -3,8 +3,8 @@ package com.metamug.jwt;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -32,6 +32,22 @@ public class JWebToken {
     private String encodedHeader;
     private String secretKey;
 
+    public static JWebToken CreateToken(String subject, String[] audience, int hours, String secretKey) {
+
+        JSONArray jsonArray = new JSONArray();
+        if (audience != null) {
+           for (int x = 0; x<audience.length; x++) {
+              jsonArray.put(audience[x]);
+           }
+        }
+
+        long current = ZonedDateTime.now(ZoneOffset.UTC).toInstant().getEpochSecond();
+        current += hours * 60 * 60;
+
+        return new JWebToken(subject, jsonArray, current, secretKey);
+
+    } 
+
     private JWebToken() {
         encodedHeader = encode(new JSONObject(JWT_HEADER));
     }
@@ -46,7 +62,7 @@ public class JWebToken {
         payload.put("sub", sub);
         payload.put("aud", aud);
         payload.put("exp", expires);
-        payload.put("iat", LocalDateTime.now().toEpochSecond(ZoneOffset.UTC));
+        payload.put("iat", ZonedDateTime.now(ZoneOffset.UTC).toInstant().getEpochSecond());
         payload.put("iss", ISSUER);
         payload.put("jti", UUID.randomUUID().toString()); //how do we use this?
         signature = hmacSha256(encodedHeader + "." + encode(payload), getSecretKey());
@@ -102,7 +118,7 @@ public class JWebToken {
     }
 
     public boolean isValid() {
-        return payload.getLong("exp") > (LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)) //token not expired
+        return payload.getLong("exp") > (ZonedDateTime.now(ZoneOffset.UTC).toInstant().getEpochSecond()) //token not expired
                 && signature.equals(hmacSha256(encodedHeader + "." + encode(payload), getSecretKey())); //signature matched
     }
 
