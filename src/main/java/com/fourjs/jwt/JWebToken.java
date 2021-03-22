@@ -1,4 +1,4 @@
-package com.metamug.jwt;
+package com.fourjs.jwt;
 
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
@@ -25,14 +25,14 @@ public class JWebToken {
 
     private static final String SECRET_KEY = "ThisIsMySpecialSecretKey:OU812!";
     private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
-    private static final String ISSUER = "mason.metamug.net";
+    private static final String ISSUER = "jwt.fourjs.com";
     private static final String JWT_HEADER = "{\"alg\":\"HS256\",\"typ\":\"JWT\"}";
     private JSONObject payload = new JSONObject();
     private String signature;
     private String encodedHeader;
     private String secretKey;
 
-    public static JWebToken CreateToken(String subject, String[] audience, int hours, String secretKey) {
+    public static JWebToken CreateToken(String subject, String[] audience, int mins, String secretKey) {
 
         JSONArray jsonArray = new JSONArray();
         if (audience != null) {
@@ -42,7 +42,7 @@ public class JWebToken {
         }
 
         long current = ZonedDateTime.now(ZoneOffset.UTC).toInstant().getEpochSecond();
-        current += hours * 60 * 60;
+        current += mins * 60;
 
         return new JWebToken(subject, jsonArray, current, secretKey);
 
