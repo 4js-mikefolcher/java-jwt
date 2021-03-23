@@ -1,6 +1,15 @@
 # java-jwt
 Java implementation of JSON Web Token (JWT) 
 
+## Getting Started
+**Prerequisite**
+Before you get started, the org.json jar file must be downloaded and referenced in CLASSPATH.\
+You can download the latest version here: https://jar-download.com/artifacts/org.json
+
+**Download & Build**
+- Download this Git repository to your local machine
+- Run the jar-build.sh command to build the jar file
+- Reference the jwt-fourjs.jar file in your CLASSPATH
 
 ## Usage
 
