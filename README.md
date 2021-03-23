@@ -9,6 +9,7 @@ Java implementation of JSON Web Token (JWT)
 
 The following code can be used to generate JWT token in Java
 
+**Java Implementation**
 ```java
 
 import com.fourjs.jwt.JWebToken;
@@ -26,6 +27,7 @@ String bearerToken = token.toString();
 
 The following code can be used to generate a JWT token in Genero
 
+**Genero Implementation**
 ```genero
 IMPORT JAVA com.fourjs.jwt.JWebToken
 IMPORT JAVA java.lang.String
@@ -67,6 +69,7 @@ END FUNCTION
 
 JWT token recieved in the String format can be used to verify and extract audience and subject information as follows.
 
+**Java Implementation**
 ```java
 //verify and use
 String secretKey = "ThisIsMySpecialSecretKey:OU812!";
@@ -77,6 +80,7 @@ if (incomingToken.isValid()) {
 }
 ```
 
+**Genero Implementation**
 ```genero
 IMPORT JAVA com.fourjs.jwt.JWebToken
 IMPORT JAVA java.lang.String
@@ -101,6 +105,6 @@ END FUNCTION
 ```
 
 ### JWT Tutorial 
-This code was modified from the original implementation \
+This code was modified from the original implementation done by com.metamug\
 Here is the original tutorial.
 https://metamug.com/article/security/jwt-java-tutorial-create-verify.html
