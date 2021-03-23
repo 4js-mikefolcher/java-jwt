@@ -2,7 +2,7 @@
 Java implementation of JSON Web Token (JWT) 
 
 ## Getting Started
-**Prerequisite**
+**Prerequisite**\
 Before you get started, the org.json jar file must be downloaded and referenced in CLASSPATH.\
 You can download the latest version here: https://jar-download.com/artifacts/org.json
 
