@@ -1,3 +1,4 @@
 Manifest-Version: 1.0
+Class-Path: jwt-fourjs.jar com/fourjs/jwt/
 Created-By: Michael Folcher
 
