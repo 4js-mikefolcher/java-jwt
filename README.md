@@ -24,11 +24,11 @@ The following code can be used to generate JWT token in Java
 import com.fourjs.jwt.JWebToken;
 
 String subject = "John";
-String[] audience = ["Admin", "Accounting", "Payroll"];
+String[] audience = new String[]{"Admin", "Accounting", "Payroll"};
 int expireMinutes = 30;
 String secretKey = "ThisIsMySpecialSecretKey:OU812!";
 
-JWebToken token = JWebToken.createToken(subject, audience, expireMinutes, secretKey);
+JWebToken token = JWebToken.CreateToken(subject, audience, expireMinutes, secretKey);
 
 String bearerToken = token.toString();
 
